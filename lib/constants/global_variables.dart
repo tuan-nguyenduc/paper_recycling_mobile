@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
- 
+
+const API_URL = "https://paper-recycling-be.vinhomes.co.uk/api/v1";
 
 class GlobalVariables {
   static const primaryColor = Color.fromRGBO(7, 191, 165, 100);

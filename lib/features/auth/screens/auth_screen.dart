@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
+import 'package:paper_recycling_shopper/features/auth/services/auth_service,.dart';
+
+import '../../home/screens/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth-screen';
@@ -10,6 +13,18 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final AuthService authService = AuthService();
+  final _signInFormKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void signInUser() {
+    authService.signInUser(
+        context: context,
+        email: _emailController.text,
+        password: _passwordController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: TextFormField(
+                          controller: _emailController,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
@@ -62,11 +78,12 @@ class _AuthScreenState extends State<AuthScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: TextFormField(
+                          controller: _passwordController,
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
-                                focusColor: Colors.black,
+                            focusColor: Colors.black,
                             labelText: "Password",
                             prefixIcon: const Icon(
                               Icons.lock_outline,
@@ -91,7 +108,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_signInFormKey.currentState!.validate()) {
+                            signInUser();
+                          }
+                          //Navigator.pushNamed(context, Home.routeName);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: GlobalVariables.primaryColor,
                           fixedSize: const Size(330, 60),
