@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:paper_recycling_shopper/features/auth/services/auth_service,.dart';
 
-import '../../home/screens/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth-screen';
@@ -109,9 +108,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          if (_signInFormKey.currentState!.validate()) {
-                            signInUser();
-                          }
+                          // if (_signInFormKey.currentState!.validate()) {
+                          //   signInUser();
+                          // }
+                          signInUser();
                           //Navigator.pushNamed(context, Home.routeName);
                         },
                         style: ElevatedButton.styleFrom(

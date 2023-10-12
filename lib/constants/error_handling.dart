@@ -13,8 +13,13 @@ void httpErrorHandle({
       onSuccess();
       break;
     case 400:
-      ScaffoldMessenger.of(context).showSnackBar(jsonDecode(response.body)['msg']);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonDecode(response.body)['message'])));
+      break;
     case 500:
-      ScaffoldMessenger.of(context).showSnackBar(jsonDecode(response.body)['error']);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonDecode(response.body)['message'])));
+      break;
+    default:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonDecode(response.body)['message'])));
+
   }
 }

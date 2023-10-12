@@ -6,6 +6,8 @@ class User {
   final String name;
   final String email;
   final String role;
+  final String createdAt;
+  final String updatedAt;
   final double paperPoint;
   final String studentId;
   final String phone;
@@ -18,16 +20,17 @@ class User {
     required this.name,
     required this.email,
     required this.role,
+    required this.createdAt,
+    required this.updatedAt,
     required this.paperPoint,
     required this.studentId,
     required this.phone,
     required this.age,
     required this.avatar,
     required this.schoolId,
-    required this.token,
+    required this.token
   });
 
-  
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -35,29 +38,33 @@ class User {
       'name': name,
       'email': email,
       'role': role,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'paperPoint': paperPoint,
       'studentId': studentId,
       'phone': phone,
       'age': age,
       'avatar': avatar,
       'schoolId': schoolId,
-      'token': token,
+      'token': token
     };
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as int,
-      name: map['name'] as String,
-      email: map['email'] as String,
-      role: map['role'] as String,
-      paperPoint: map['paperPoint'] as double,
-      studentId: map['studentId'] as String,
-      phone: map['phone'] as String,
-      age: map['age'] as int,
-      avatar: map['avatar'] as String,
-      schoolId: map['schoolId'] as int,
-      token: map['token'] as String,
+      id: map['user']['id'] as int,
+      name: map['user']['name'] as String,
+      email: map['user']['email'] as String,
+      role: map['user']['role'] as String,
+      createdAt: map['user']['createdAt'] as String,
+      updatedAt: map['user']['updatedAt'] as String,
+      paperPoint: map['user']['paperPoint'] as double,
+      studentId: map['user']['studentId'] as String,
+      phone: map['user']['phone'] as String,
+      age: map['user']['age'] as int,
+      avatar: map['user']['avatar'] as String,
+      schoolId: map['user']['schoolId'] as int,
+      token: map['accessToken'] as String
     );
   }
 
