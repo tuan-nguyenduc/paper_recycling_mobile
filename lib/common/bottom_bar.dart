@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
+import 'package:paper_recycling_shopper/features/account/screens/account_screen.dart';
+import 'package:paper_recycling_shopper/features/cart/screens/cart_screen.dart';
 import 'package:paper_recycling_shopper/features/home/screens/home_screen.dart';
+import 'package:paper_recycling_shopper/features/order/screens/order_screen.dart';
 
 class BottomBar extends StatefulWidget {
   static const String routeName = '/actual-home';
@@ -17,8 +20,10 @@ class _BottomBarState extends State<BottomBar> {
 
     List<Widget> pages = [
     const HomeScreen(),
-    // const AccountScreen(),
-    // const CartScreen(),
+    const CartScreen(),
+    const OrderScreen(),
+    const AccountScreen(),
+    
   ];
 
   void updatePage(int page) {

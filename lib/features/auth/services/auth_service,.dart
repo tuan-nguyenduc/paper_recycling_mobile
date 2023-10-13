@@ -41,9 +41,10 @@ class AuthService {
 
             await prefs.setString(
                 'x-auth-token', jsonDecode(res.body)['data']['accessToken']);
+
+            Navigator.pushNamedAndRemoveUntil(
+                context, BottomBar.routeName, (route) => false);
           });
-      Navigator.pushNamedAndRemoveUntil(
-          context, BottomBar.routeName, (route) => false);
     } catch (err) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(err.toString())));
