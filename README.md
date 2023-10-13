@@ -1,6 +1,6 @@
 # paper_recycling_shopper
 
-A new Flutter project.
+A mobile project for paper recycling management system.
 
 ## Getting Started
 
