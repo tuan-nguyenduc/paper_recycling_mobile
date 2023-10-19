@@ -12,7 +12,7 @@ class User {
   final String studentId;
   final String phone;
   final int age;
-  final String avatar;
+  final String? avatar;
   final int schoolId;
   final String token;
   User({
@@ -26,7 +26,7 @@ class User {
     required this.studentId,
     required this.phone,
     required this.age,
-    required this.avatar,
+    this.avatar,
     required this.schoolId,
     required this.token
   });

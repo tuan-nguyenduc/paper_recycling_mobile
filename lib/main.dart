@@ -10,7 +10,9 @@ import 'package:paper_recycling_shopper/features/auth/services/auth_service,.dar
 
 void main() {
   //SharedPreferences.setMockInitialValues({});
-  runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => UserProvider())] ,child: const MyApp()));
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -25,8 +27,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: const TextTheme(headlineSmall: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      ),
       debugShowCheckedModeBanner: false,
-      home: Provider.of<UserProvider>(context).user.token.isNotEmpty ? const BottomBar() : const AuthScreen(),
+      home: Provider.of<UserProvider>(context).user.token.isNotEmpty
+          ? const BottomBar()
+          : const AuthScreen(),
       onGenerateRoute: (settings) => genereateRoute(settings),
     );
   }
