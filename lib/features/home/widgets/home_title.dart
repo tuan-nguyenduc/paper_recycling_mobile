@@ -2,26 +2,24 @@ import 'package:flutter/material.dart';
 
 class HomeTitle extends StatelessWidget {
   final String? title;
+  final Icon? icon;
   const HomeTitle({
     super.key,
     this.title,
+    this.icon,
   });
 
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
+      padding: const EdgeInsets.only(left: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.flash_on,
-                size: 30,
-                color: Colors.deepOrange,
-              ),
+              icon!,
               Text(
                 title!,
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -30,10 +28,10 @@ class HomeTitle extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(
-              Icons.arrow_right_alt,
-              size: 30,
-            ),
+            icon: const Icon(
+                Icons.arrow_right_alt,
+                size: 30,
+              ),
           ),
         ],
       ),

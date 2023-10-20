@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:paper_recycling_shopper/features/home/services/home_services.dart';
+import 'package:paper_recycling_shopper/features/home/widgets/category_card.dart';
 import 'package:paper_recycling_shopper/features/home/widgets/home_title.dart';
 import 'package:paper_recycling_shopper/features/home/widgets/product_card.dart';
+import 'package:paper_recycling_shopper/features/product/screens/product_detail.dart';
+import 'package:paper_recycling_shopper/models/category.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
 import 'package:paper_recycling_shopper/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +24,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeServices homeServices = HomeServices();
-  late Future<List<Product>> futureProducts;
+  late Future<List<Product>> latestProducts;
+  late Future<List<Product>> bestSellerProducts;
+  late Future<List<Category>> categories;
+
   @override
   void initState() {
     super.initState();
-    futureProducts =
-        homeServices.fetchProducts(context: context, page: 0, limit: 10);
-    print(futureProducts);
+    latestProducts = homeServices.fetchProducts(
+      context: context,
+      page: 0,
+      limit: 10,
+      sortBy: 'createdAt',
+      sortDirection: 'ASC',
+    );
+    bestSellerProducts = homeServices.fetchProducts(
+        context: context,
+        page: 0,
+        limit: 10,
+        sortBy: 'quantity',
+        sortDirection: 'ASC');
+
+    categories = homeServices.fetchCategories(context: context);
+    print(categories);
   }
 
   @override
@@ -120,55 +139,58 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const HomeTitle(
+              title: 'Categories',
+              icon: Icon(
+                Icons.category_sharp,
+                size: 28,
+                color: Colors.deepOrange,
+              ),
+            ),
             SizedBox(
               height: 150,
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 0.4,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children: List.generate(6, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        // width: 200,
-                        // height: 100,
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: Text(
-                                  "Category 1",
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                      'https://s3-api.4bytes.io/paper-recycling/1692261540650_compa.jpeg',
-                                      width: 50)),
-                            ],
-                          ),
-                        ),
+              child: FutureBuilder(
+                future: categories,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.4,
                       ),
-                    ),
-                  );
-                }),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: snapshot.data?.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return CategoryCard(
+                          image: snapshot.data?[index].image,
+                          name: snapshot.data?[index].name,
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
               ),
             ),
 
             //Latest Products
-            HomeTitle(title: 'Latest Products'),
+            const HomeTitle(
+              title: 'Latest Products',
+              icon: Icon(
+                Icons.flash_on,
+                size: 30,
+                color: Colors.deepOrange,
+              ),
+            ),
             SizedBox(
               height: 250,
               child: FutureBuilder(
-                future: futureProducts,
+                future: latestProducts,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
@@ -176,14 +198,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return ProductCard(
-                            name: snapshot.data?[index].name,
-                            image:
-                                snapshot.data?[index].images,
-                            price: snapshot.data?[index].price);
+                            context: context,
+                            product: snapshot.data![index],
+                            );
                       },
                     );
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -192,33 +213,36 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // Best Sellers
-            HomeTitle(title: 'Best Sellers'),
+            const HomeTitle(
+              title: 'Best Sellers',
+              icon: Icon(
+                Icons.sell,
+                size: 28,
+                color: Colors.deepOrange,
+              ),
+            ),
             SizedBox(
               height: 250,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  ProductCard(
-                      name: "Móc chìa khóa cute",
-                      image:
-                          'https://s3-api.4bytes.io/paper-recycling/1692240543102_bannacat.png',
-                      price: 100),
-                  ProductCard(
-                      name: "Móc chìa khóa cute",
-                      image:
-                          'https://s3-api.4bytes.io/paper-recycling/1692240543102_bannacat.png',
-                      price: 100),
-                  ProductCard(
-                      name: "Móc chìa khóa cute",
-                      image:
-                          'https://s3-api.4bytes.io/paper-recycling/1692240543102_bannacat.png',
-                      price: 100),
-                  ProductCard(
-                      name: "Móc chìa khóa cute",
-                      image:
-                          'https://s3-api.4bytes.io/paper-recycling/1692240543102_bannacat.png',
-                      price: 100),
-                ],
+              child: FutureBuilder(
+                future: bestSellerProducts,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data?.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return ProductCard(
+                          context: context,
+                          product: snapshot.data![index],
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
               ),
             ),
           ],

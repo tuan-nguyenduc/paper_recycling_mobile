@@ -115,7 +115,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           //Navigator.pushNamed(context, Home.routeName);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: GlobalVariables.primaryColor,
+                          backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
                           fixedSize: const Size(330, 60),
                         ),
                         child: const Text("Sign In"),
