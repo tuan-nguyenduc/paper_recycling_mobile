@@ -5,8 +5,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:paper_recycling_shopper/common/custom_appbar.dart';
 import 'package:paper_recycling_shopper/features/home/services/home_services.dart';
 import 'package:paper_recycling_shopper/features/home/widgets/product_card.dart';
+import 'package:paper_recycling_shopper/features/product/widget/review_card.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
+import 'package:paper_recycling_shopper/models/review.dart';
 import 'package:paper_recycling_shopper/models/user.dart';
+import 'package:paper_recycling_shopper/services/review_services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
@@ -26,18 +29,27 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   final HomeServices homeServices = HomeServices();
+  final ReviewServices reviewServices = ReviewServices();
   late Future<List<Product>> relatedProducts;
+  late Future<List<Review>> reviews;
 
   @override
   void initState() {
-    print(widget.product.categoryId);
+    //print(widget.product.id);
     super.initState();
     relatedProducts = homeServices.fetchProducts(
         context: context,
         page: 0,
         limit: 10,
         categoryId: widget.product.categoryId);
-    print(relatedProducts);
+
+    reviews = reviewServices.fetchReviews(
+      context: context,
+      page: 0,
+      limit: 10,
+      productId: widget.product.id,
+    );
+    print(reviews);
   }
 
   @override
@@ -161,6 +173,8 @@ class _ProductDetailState extends State<ProductDetail> {
                           product.categoryId == widget.product.categoryId);
 
                       return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: snapshot.data?.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
@@ -182,30 +196,36 @@ class _ProductDetailState extends State<ProductDetail> {
                 height: 10,
               ),
               const Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10),
                 child: Text("Reviews",
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
+              SizedBox(
+                height: 250,
+                child: FutureBuilder(
+                    future: reviews,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        print(snapshot.data);
+                        return ListView.builder(
+                          itemCount: snapshot.data?.length,
+                          itemBuilder: (context, index) {
+                            return Expanded(
+                              child: ReviewCard(
+                                context: context,
+                                review: snapshot.data![index],
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
-                  child: Text("hello")
-                ),
               ),
             ],
           ),
@@ -228,3 +248,5 @@ class _ProductDetailState extends State<ProductDetail> {
         ]);
   }
 }
+
+

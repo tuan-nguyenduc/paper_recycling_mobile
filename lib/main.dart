@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
         textTheme: const TextTheme(headlineSmall: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
       debugShowCheckedModeBanner: false,
-      home: Provider.of<UserProvider>(context).user.token.isNotEmpty
+      home: Provider.of<UserProvider>(context).user.token!.isNotEmpty
           ? const BottomBar()
           : const AuthScreen(),
       onGenerateRoute: (settings) => genereateRoute(settings),

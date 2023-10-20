@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
         sortDirection: 'ASC');
 
     categories = homeServices.fetchCategories(context: context);
-    print(categories);
   }
 
   @override

@@ -88,7 +88,7 @@ class HomeServices {
       if (limit != null) {
         url += '&limit=$limit';
       }
-      print(url);
+      //print(url);
 
       http.Response res = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json; charset=UTF-8',

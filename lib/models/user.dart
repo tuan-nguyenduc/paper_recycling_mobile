@@ -14,7 +14,7 @@ class User {
   final int age;
   final String? avatar;
   final int schoolId;
-  final String token;
+  final String? token;
   User({
     required this.id,
     required this.name,
@@ -28,7 +28,7 @@ class User {
     required this.age,
     this.avatar,
     required this.schoolId,
-    required this.token
+    this.token
   });
 
 
@@ -64,7 +64,7 @@ class User {
       age: map['user']['age'] as int,
       avatar: map['user']['avatar'] as String,
       schoolId: map['user']['schoolId'] as int,
-      token: map['accessToken'] as String
+      token: map['accessToken'] != null ? map['accessToken'] as String : null
     );
   }
 
