@@ -27,11 +27,11 @@ Route<dynamic> genereateRoute(RouteSettings routeSettings) {
         builder: (_) => const CartScreen(),
       );
 
-    case BottomBar.routeName:
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => const BottomBar(),
-      );
+    // case BottomBar.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => const BottomBar(),
+    //   );
 
     case PersistentBottomBar.routeName:
       return MaterialPageRoute(

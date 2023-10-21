@@ -235,17 +235,20 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
         persistentFooterButtons: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
-                  fixedSize: const Size(330, 60),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
+                    fixedSize: const Size(330, 60),
+                  ),
+                  child: Text("Buy Now", style: TextStyle(fontSize: 16)),
                 ),
-                child: const Text("Buy Now"),
               ),
             ),
           ),

@@ -4,10 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/common/bottom_bar.dart';
+import 'package:paper_recycling_shopper/common/persistent_nav_bar.dart';
 import 'package:paper_recycling_shopper/constants/error_handling.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:http/http.dart' as http;
 import 'package:paper_recycling_shopper/providers/user_provider.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:paper_recycling_shopper/features/home/screens/home_screen.dart';
@@ -43,7 +45,8 @@ class AuthService {
                 'x-auth-token', jsonDecode(res.body)['data']['accessToken']);
 
             Navigator.pushNamedAndRemoveUntil(
-                context, BottomBar.routeName, (route) => false);
+                context, PersistentBottomBar.routeName, (route) => false);
+            // Navigator.of(context).popUntil(ModalRoute.withName("/home"));
           });
     } catch (err) {
       ScaffoldMessenger.of(context)

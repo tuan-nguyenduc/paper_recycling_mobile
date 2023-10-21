@@ -33,6 +33,8 @@ class ProductCard extends StatelessWidget {
         context: context, productId: product.id, quantity: 1);
     print(orderData);
     PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen());
+    // Navigator.pushNamedAndRemoveUntil(
+    //             context, CartScreen.routeName, (route) => false);
   }
 
   @override

@@ -22,7 +22,7 @@ class _CartScreenState extends State<CartScreen> {
   final orderServices = OrderServices();
   late Future<List<Order>> mindeOrders;
   late Future<List<OrderDetail>> mindeOrderDetails;
-
+  bool isChangedQuantity = false;
   @override
   void initState() {
     super.initState();
@@ -34,7 +34,9 @@ class _CartScreenState extends State<CartScreen> {
     );
 
     //orderdetail of created order (in cart) => one user has only one item => first item of orderlist
-    mindeOrderDetails = mindeOrders.then((value) => value.first.orderDetails!);
+    mindeOrderDetails = mindeOrders.then((value) {
+      return value.first.orderDetails!;
+    });
     // print(mindeOrderDetails);
   }
 
@@ -109,12 +111,58 @@ class _CartScreenState extends State<CartScreen> {
                   },
                 ),
               ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Total",
+                        style: Theme.of(context).textTheme.titleLarge),
+                    FutureBuilder(
+                      future: mindeOrderDetails,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          int total = 0;
+                          for (int i = 0; i < snapshot.data!.length; i++) {
+                            total += snapshot.data![i].price! *
+                                snapshot.data![i].quantity!;
+                          }
+                          return Text('$total PP',
+                              style: Theme.of(context).textTheme.headlineSmall);
+                        } else {
+                          return const Center(
+                            child: Text(""),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
       ),
+      persistentFooterButtons: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  fixedSize: const Size(330, 60),
+                ),
+                child: const Text("Checkout", style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
-
-

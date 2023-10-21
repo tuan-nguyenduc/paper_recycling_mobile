@@ -87,4 +87,36 @@ class OrderServices {
     }
     return createOrderData;
   }
+
+  Future<String> updateOrder({
+    required BuildContext context,
+    required orderId,
+    required productId,
+    required quantity,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String updateOrderData = "";
+    try {
+      String url = '$API_URL/orders/$orderId';
+      http.Response res = await http.put(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${userProvider.user.token}',
+        },
+        body: jsonEncode({
+          "productId": productId,
+          "quantity": quantity,
+        }),
+      );
+      updateOrderData = res.body;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+    return updateOrderData;
+  }
 }
