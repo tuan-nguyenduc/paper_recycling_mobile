@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 
 const API_URL = "https://paper-recycling-be.vinhomes.co.uk/api/v1";
 
-const DEFAULT_AVATAR_IMG = "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg";
+const DEFAULT_AVATAR_IMG =
+    "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg";
+
+const ORDER_STATUS = {
+  "CREATED": 1,
+  "SHIPPING": 2,
+  "COMPLETED": 3,
+  "CANCELLED": -1,
+};
 
 class GlobalVariables {
   static const primaryColor = Color.fromRGBO(7, 191, 165, 100);

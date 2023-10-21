@@ -67,7 +67,7 @@ class ReviewCard extends StatelessWidget {
                 height: 5,
               ),
               RatingBar.builder(
-                initialRating: 3,
+                initialRating: review.rating!.toDouble(),
                 minRating: 1,
                 direction: Axis.horizontal,
                 ignoreGestures: true,

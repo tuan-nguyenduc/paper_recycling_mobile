@@ -1,17 +1,38 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
+import 'package:paper_recycling_shopper/features/cart/screens/cart_screen.dart';
 import 'package:paper_recycling_shopper/features/product/screens/product_detail.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
+import 'package:paper_recycling_shopper/services/order_services.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
   final BuildContext context;
+  ProductCard({
+    Key? key,
+    required this.product,
+    required this.context,
+  }) : super(key: key);
 
-  const ProductCard({super.key, required this.product, required this.context});
+  final orderServices = OrderServices();
+  late Future<String> orderData;
+  void navigateToProductDetailScreen(Product product) {
+    // Navigator.pushNamed(context, ProductDetail.routeName, arguments: product);
+    PersistentNavBarNavigator.pushNewScreen(context, screen: ProductDetail(product: product), withNavBar: false);
 
-   void navigateToProductDetailScreen(Product product) {
-    Navigator.pushNamed(context, ProductDetail.routeName, arguments: product);
+  }
+
+  void addProductToCart() async {
+    orderData = orderServices.createOrder(
+        context: context, productId: product.id, quantity: 1);
+    print(orderData);
+    PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen());
   }
 
   @override
@@ -96,7 +117,7 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () => addProductToCart(),
                         icon: const Icon(
                           Icons.shopping_cart_rounded,
                           color: Colors.deepOrange,

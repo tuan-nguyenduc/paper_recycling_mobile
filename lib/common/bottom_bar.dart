@@ -87,7 +87,7 @@ class _BottomBarState extends State<BottomBar> {
                   border: Border(
                     top: BorderSide(
                       color: _page == 2
-                          ? GlobalVariables.primaryColor
+                          ? GlobalVariables.primaryColor.withOpacity(1)
                           : GlobalVariables.backgroundColor,
                       width: bottomBarBorderWidth,
                     ),

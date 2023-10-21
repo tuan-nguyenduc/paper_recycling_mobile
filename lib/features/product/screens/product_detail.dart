@@ -202,20 +202,24 @@ class _ProductDetailState extends State<ProductDetail> {
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               SizedBox(
-                height: 250,
                 child: FutureBuilder(
                     future: reviews,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        print(snapshot.data);
+                        if (snapshot.data!.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Center(child: Text("No one reviewed this product before.")),
+                          );
+                        }
                         return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
                           itemCount: snapshot.data?.length,
                           itemBuilder: (context, index) {
-                            return Expanded(
-                              child: ReviewCard(
-                                context: context,
-                                review: snapshot.data![index],
-                              ),
+                            return ReviewCard(
+                              context: context,
+                              review: snapshot.data![index],
                             );
                           },
                         );
