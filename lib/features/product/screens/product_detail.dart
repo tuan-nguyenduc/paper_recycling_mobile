@@ -3,13 +3,16 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:paper_recycling_shopper/common/custom_appbar.dart';
+import 'package:paper_recycling_shopper/features/cart/screens/cart_screen.dart';
 import 'package:paper_recycling_shopper/features/home/services/home_services.dart';
 import 'package:paper_recycling_shopper/features/home/widgets/product_card.dart';
 import 'package:paper_recycling_shopper/features/product/widget/review_card.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
 import 'package:paper_recycling_shopper/models/review.dart';
 import 'package:paper_recycling_shopper/models/user.dart';
+import 'package:paper_recycling_shopper/services/order_services.dart';
 import 'package:paper_recycling_shopper/services/review_services.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
@@ -29,6 +32,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   final HomeServices homeServices = HomeServices();
+  final OrderServices orderServices = OrderServices();
   final ReviewServices reviewServices = ReviewServices();
   late Future<List<Product>> relatedProducts;
   late Future<List<Review>> reviews;
@@ -49,7 +53,17 @@ class _ProductDetailState extends State<ProductDetail> {
       limit: 10,
       productId: widget.product.id,
     );
-    print(reviews);
+  }
+
+  void addProductToCart() async {
+    await orderServices
+        .createOrder(
+            context: context, productId: widget.product.id, quantity: 1)
+        .whenComplete(() => PersistentNavBarNavigator.pushNewScreen(context,
+            screen: const CartScreen()));
+
+    // Navigator.pushNamedAndRemoveUntil(
+    //             context, CartScreen.routeName, (route) => false);
   }
 
   @override
@@ -203,33 +217,35 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
               SizedBox(
                 child: FutureBuilder(
-                    future: reviews,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Center(child: Text("No one reviewed this product before.")),
-                          );
-                        }
-                        return ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: snapshot.data?.length,
-                          itemBuilder: (context, index) {
-                            return ReviewCard(
-                              context: context,
-                              review: snapshot.data![index],
-                            );
-                          },
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                  future: reviews,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Center(
+                              child:
+                                  Text("No one reviewed this product before.")),
                         );
                       }
-                    },
-                  ),
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          return ReviewCard(
+                            context: context,
+                            review: snapshot.data![index],
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -242,9 +258,10 @@ class _ProductDetailState extends State<ProductDetail> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => addProductToCart(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
+                    backgroundColor:
+                        GlobalVariables.primaryColor.withOpacity(1),
                     fixedSize: const Size(330, 60),
                   ),
                   child: Text("Buy Now", style: TextStyle(fontSize: 16)),
@@ -255,5 +272,3 @@ class _ProductDetailState extends State<ProductDetail> {
         ]);
   }
 }
-
-

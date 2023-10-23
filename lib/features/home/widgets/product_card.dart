@@ -21,7 +21,7 @@ class ProductCard extends StatelessWidget {
   }) : super(key: key);
 
   final orderServices = OrderServices();
-  late Future<String> orderData;
+  late String orderData;
   void navigateToProductDetailScreen(Product product) {
     // Navigator.pushNamed(context, ProductDetail.routeName, arguments: product);
     PersistentNavBarNavigator.pushNewScreen(context, screen: ProductDetail(product: product), withNavBar: false);
@@ -29,10 +29,9 @@ class ProductCard extends StatelessWidget {
   }
 
   void addProductToCart() async {
-    orderData = orderServices.createOrder(
-        context: context, productId: product.id, quantity: 1);
+    orderData = await orderServices.createOrder(
+        context: context, productId: product.id, quantity: 1).whenComplete(() => PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen()));
     print(orderData);
-    PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen());
     // Navigator.pushNamedAndRemoveUntil(
     //             context, CartScreen.routeName, (route) => false);
   }

@@ -5,20 +5,19 @@ import 'package:paper_recycling_shopper/models/order_detail.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
 import 'package:paper_recycling_shopper/services/order_services.dart';
 
-class CartItem extends StatefulWidget {
+class CartItem extends StatelessWidget {
   final OrderDetail orderDetail;
-  const CartItem({
+  final VoidCallback onAdd;
+  final VoidCallback onRemove;
+  CartItem({
     Key? key,
     required this.orderDetail,
+    required this.onAdd,
+    required this.onRemove,
   }) : super(key: key);
 
-  @override
-  State<CartItem> createState() => _CartItemState();
-}
 
-class _CartItemState extends State<CartItem> {
   final orderServices = OrderServices();
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class _CartItemState extends State<CartItem> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Image.network(
-                      widget.orderDetail.product!.images!.split(',')[0],
+                      orderDetail.product!.images!.split(',')[0],
                     ),
                   ),
                   Column(
@@ -58,7 +57,7 @@ class _CartItemState extends State<CartItem> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
-                        child: Text(widget.orderDetail.product!.name!,
+                        child: Text(orderDetail.product!.name!,
                             style: TextStyle(
                               fontSize: 20,
                             )),
@@ -66,14 +65,14 @@ class _CartItemState extends State<CartItem> {
                       Row(
                         children: [
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () => onRemove(),
                               icon: const Icon(Icons.remove_circle_outline)),
                           Text(
-                            widget.orderDetail.quantity.toString(),
+                            orderDetail.quantity.toString(),
                             style: TextStyle(fontSize: 18),
                           ),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () => onAdd(),
                               icon: const Icon(Icons.add_circle_outline)),
                         ],
                       )
@@ -86,7 +85,7 @@ class _CartItemState extends State<CartItem> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('${widget.orderDetail.product!.price} PP',
+                    Text('${orderDetail.price!*orderDetail.quantity!} PP',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ],

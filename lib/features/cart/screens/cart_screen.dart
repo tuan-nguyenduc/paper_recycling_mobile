@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/common/custom_appbar.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:paper_recycling_shopper/features/cart/widgets/cart_item.dart';
+import 'package:paper_recycling_shopper/features/home/services/home_services.dart';
 import 'package:paper_recycling_shopper/models/order.dart';
 import 'package:paper_recycling_shopper/models/order_detail.dart';
 import 'package:paper_recycling_shopper/providers/user_provider.dart';
@@ -20,24 +21,121 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final orderServices = OrderServices();
-  late Future<List<Order>> mindeOrders;
-  late Future<List<OrderDetail>> mindeOrderDetails;
+  late List<Order> mineOrders;
+  late List<OrderDetail> mineOrderDetails;
   bool isChangedQuantity = false;
+  late int total = 0;
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
-    mindeOrders = orderServices.fetchMineOrders(
-      context: context,
-      page: 0,
-      limit: 10,
-      status: ORDER_STATUS['CREATED'],
-    );
+    mineOrderDetails = [];
+    total = 0;
+    fetchOrderDetail();
+  }
 
-    //orderdetail of created order (in cart) => one user has only one item => first item of orderlist
-    mindeOrderDetails = mindeOrders.then((value) {
-      return value.first.orderDetails!;
-    });
-    // print(mindeOrderDetails);
+  void fetchOrderDetail() async {
+    try {
+      // isLoading = true;
+      mineOrders = await orderServices.fetchMineOrders(
+        context: context,
+        page: 0,
+        limit: 10,
+        status: ORDER_STATUS['CREATED'],
+      );
+      if (mounted) {
+        setState(() {
+          mineOrderDetails = mineOrders![0].orderDetails!;
+          for (int i = 0; i < mineOrderDetails.length!; i++) {
+            total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
+          }
+        });
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    } finally {
+      // isLoading = false;
+    }
+  }
+
+  void decreaseQuantity(BuildContext context, int index, int orderId,
+      int productId, int quantity) async {
+    // print(
+    //     'index: $index, orderId: $orderId productId: $productId, quantity: $quantity');
+    total = 0;
+    OrderDetail res = await orderServices.updateOrder(
+        context: context,
+        orderId: orderId,
+        productId: productId,
+        quantity: quantity - 1);
+    if (mounted) {
+      if (quantity == 1) {
+        total = 0;
+        setState(() {
+          mineOrderDetails.removeAt(index);
+          for (int i = 0; i < mineOrderDetails.length!; i++) {
+            total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
+          }
+        });
+      } else {
+        setState(() {
+          mineOrderDetails[index].quantity = res.quantity;
+          mineOrderDetails[index].price = res.price;
+          mineOrderDetails[index].updatedAt = res.updatedAt;
+          for (int i = 0; i < mineOrderDetails.length!; i++) {
+            total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
+          }
+        });
+      }
+    }
+  }
+
+  void increaseQuantity(BuildContext context, int index, int orderId,
+      int productId, int quantity) async {
+    OrderDetail res = await orderServices.updateOrder(
+        context: context,
+        orderId: orderId,
+        productId: productId,
+        quantity: quantity + 1);
+    total = 0;
+    if (mounted) {
+      setState(() {
+        mineOrderDetails[index].quantity = res.quantity;
+        mineOrderDetails[index].price = res.price;
+        mineOrderDetails[index].updatedAt = res.updatedAt;
+        for (int i = 0; i < mineOrderDetails.length!; i++) {
+          total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
+        }
+      });
+    }
+  }
+
+  void clearCart() async {
+    for (int i = 0; i < mineOrderDetails.length; i++) {
+      await orderServices.updateOrder(
+          context: context,
+          orderId: mineOrderDetails[i].orderId,
+          productId: mineOrderDetails[i].productId,
+          quantity: 0);
+    }
+    if (mounted) {
+      setState(() {
+        mineOrderDetails = [];
+        total = 0;
+      });
+    }
+  }
+
+  void purchaseCart() async {
+    String res = await orderServices.purchaseOrder(
+        context: context, orderId: mineOrders[0].id!);
+    if (mounted) {
+      setState(() {
+        mineOrderDetails = [];
+        total = 0;
+      });
+    }
+    print(res);
   }
 
   @override
@@ -63,9 +161,7 @@ class _CartScreenState extends State<CartScreen> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     OutlinedButton(
-                      onPressed: () {
-                        debugPrint('Received click');
-                      },
+                      onPressed: () => clearCart(),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.red),
                         shape: RoundedRectangleBorder(
@@ -82,35 +178,31 @@ class _CartScreenState extends State<CartScreen> {
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                child: FutureBuilder(
-                  future: mindeOrderDetails,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Center(child: Text("Your cart is empty.")),
-                        );
-                      }
-                      return ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: snapshot.data?.length,
-                        itemBuilder: (context, index) {
-                          return CartItem(
-                            orderDetail: snapshot.data![index],
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
-              ),
+              isLoading
+                  ? CircularProgressIndicator()
+                  : mineOrderDetails.isEmpty
+                      ? Text("Your cart is empty!")
+                      : ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: mineOrderDetails!.length,
+                          itemBuilder: (context, index) {
+                            return CartItem(
+                              orderDetail: mineOrderDetails![index],
+                              onAdd: () => increaseQuantity(
+                                  context,
+                                  index,
+                                  mineOrderDetails![index].orderId!,
+                                  mineOrderDetails![index].productId!,
+                                  mineOrderDetails![index].quantity!),
+                              onRemove: () => decreaseQuantity(
+                                  context,
+                                  index,
+                                  mineOrderDetails![index].orderId!,
+                                  mineOrderDetails![index].productId!,
+                                  mineOrderDetails![index].quantity!),
+                            );
+                          }),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -119,24 +211,26 @@ class _CartScreenState extends State<CartScreen> {
                   children: [
                     Text("Total",
                         style: Theme.of(context).textTheme.titleLarge),
-                    FutureBuilder(
-                      future: mindeOrderDetails,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          int total = 0;
-                          for (int i = 0; i < snapshot.data!.length; i++) {
-                            total += snapshot.data![i].price! *
-                                snapshot.data![i].quantity!;
-                          }
-                          return Text('$total PP',
-                              style: Theme.of(context).textTheme.headlineSmall);
-                        } else {
-                          return const Center(
-                            child: Text(""),
-                          );
-                        }
-                      },
-                    ),
+                    Text('$total PP',
+                        style: Theme.of(context).textTheme.headlineSmall),
+                    // FutureBuilder(
+                    //   future: mindeOrderDetails,
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.hasData) {
+                    //       int total = 0;
+                    //       for (int i = 0; i < snapshot.data!.length; i++) {
+                    //         total += snapshot.data![i].price! *
+                    //             snapshot.data![i].quantity!;
+                    //       }
+                    //       return Text('$total PP',
+                    //           style: Theme.of(context).textTheme.headlineSmall);
+                    //     } else {
+                    //       return const Center(
+                    //         child: Text(""),
+                    //       );
+                    //     }
+                    //   },
+                    // ),
                   ],
                 ),
               )
@@ -152,7 +246,7 @@ class _CartScreenState extends State<CartScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => purchaseCart(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   fixedSize: const Size(330, 60),

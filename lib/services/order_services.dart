@@ -17,6 +17,8 @@ class OrderServices {
     int? page,
     int? limit,
     int? status,
+    String? sortBy,
+    String? sortDirection,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Order> orderList = [];
@@ -30,6 +32,9 @@ class OrderServices {
       }
       if (status != null) {
         url += '&status=$status';
+      }
+      if (sortBy != null && sortDirection != null) {
+        url += '&sortBy=$sortBy&sortDirection=$sortDirection';
       }
 
       http.Response res = await http.get(Uri.parse(url), headers: {
@@ -88,14 +93,14 @@ class OrderServices {
     return createOrderData;
   }
 
-  Future<String> updateOrder({
+  Future<OrderDetail> updateOrder({
     required BuildContext context,
     required orderId,
     required productId,
     required quantity,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    String updateOrderData = "";
+    OrderDetail updateOrderData = OrderDetail();
     try {
       String url = '$API_URL/orders/$orderId';
       http.Response res = await http.put(
@@ -109,7 +114,38 @@ class OrderServices {
           "quantity": quantity,
         }),
       );
-      updateOrderData = res.body;
+
+      updateOrderData =
+          OrderDetail.fromJson(jsonEncode(jsonDecode(res.body)['data']));
+    } catch (e) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(e.toString()),
+      //   ),
+      // );
+    }
+    return updateOrderData;
+  }
+
+  Future<String> purchaseOrder(
+      {required BuildContext context, required int orderId}) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String message = '';
+    try {
+      String url = '$API_URL/orders/$orderId/purchase';
+      http.Response res = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${userProvider.user.token}',
+        },
+      );
+
+      message = jsonDecode(res.body)['message'];
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        showCloseIcon: true,
+      ));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -117,6 +153,6 @@ class OrderServices {
         ),
       );
     }
-    return updateOrderData;
+    return message;
   }
 }

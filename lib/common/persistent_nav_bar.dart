@@ -64,6 +64,7 @@ class _PersistentBottomBarState extends State<PersistentBottomBar> {
   Widget build(BuildContext context) {
     return Container(
       child: PersistentTabView(
+        
         context,
         controller: _controller,
         screens: _buildScreens(),

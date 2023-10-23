@@ -66,7 +66,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           controller: _emailController,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(20)),
                               labelText: "Email",
                               prefixIcon: const Icon(
                                 Icons.email_outlined,
@@ -81,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(20)),
                             focusColor: Colors.black,
                             labelText: "Password",
                             prefixIcon: const Icon(
@@ -106,19 +106,22 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ))),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // if (_signInFormKey.currentState!.validate()) {
-                          //   signInUser();
-                          // }
-                          signInUser();
-                          //Navigator.pushNamed(context, Home.routeName);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
-                          fixedSize: const Size(330, 60),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // if (_signInFormKey.currentState!.validate()) {
+                            //   signInUser();
+                            // }
+                            signInUser();
+                            //Navigator.pushNamed(context, Home.routeName);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: GlobalVariables.primaryColor.withOpacity(1),
+                            fixedSize: const Size(330, 60),
+                          ),
+                          child: const Text("Sign In",),
                         ),
-                        child: const Text("Sign In"),
                       )
                     ],
                   ))
