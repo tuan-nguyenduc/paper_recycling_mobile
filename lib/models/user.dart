@@ -58,7 +58,7 @@ class User {
       role: map['user']['role'] as String,
       createdAt: map['user']['createdAt'] as String,
       updatedAt: map['user']['updatedAt'] as String,
-      paperPoint: map['user']['paperPoint'] as double,
+      paperPoint: map['user']['paperPoint'].toDouble() as double,
       studentId: map['user']['studentId'] as String,
       phone: map['user']['phone'] as String,
       age: map['user']['age'] as int,

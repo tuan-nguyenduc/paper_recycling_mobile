@@ -155,4 +155,62 @@ class OrderServices {
     }
     return message;
   }
+
+  Future<String> confirmOrder(
+      {required BuildContext context, required int orderId}) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String message = '';
+    try {
+      String url = '$API_URL/orders/$orderId/confirm';
+      http.Response res = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${userProvider.user.token}',
+        },
+      );
+
+      message = jsonDecode(res.body)['message'];
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        showCloseIcon: true,
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+    return message;
+  }
+
+    Future<String> cancelOrder(
+      {required BuildContext context, required int orderId}) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String message = '';
+    try {
+      String url = '$API_URL/orders/$orderId/cancel';
+      http.Response res = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${userProvider.user.token}',
+        },
+      );
+
+      message = jsonDecode(res.body)['message'];
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        showCloseIcon: true,
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+    return message;
+  }
 }

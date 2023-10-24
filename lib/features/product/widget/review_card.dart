@@ -73,7 +73,7 @@ class ReviewCard extends StatelessWidget {
                 ignoreGestures: true,
                 itemCount: 5,
                 itemSize: 20,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                 itemBuilder: (context, _) => const Icon(
                   Icons.star,
                   color: Colors.deepOrange,

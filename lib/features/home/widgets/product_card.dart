@@ -1,10 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:paper_recycling_shopper/features/cart/screens/cart_screen.dart';
 import 'package:paper_recycling_shopper/features/product/screens/product_detail.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
@@ -30,10 +28,9 @@ class ProductCard extends StatelessWidget {
 
   void addProductToCart() async {
     orderData = await orderServices.createOrder(
-        context: context, productId: product.id, quantity: 1).whenComplete(() => PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen()));
-    print(orderData);
-    // Navigator.pushNamedAndRemoveUntil(
-    //             context, CartScreen.routeName, (route) => false);
+        context: context, productId: product.id, quantity: 1)
+        .whenComplete(() => PersistentNavBarNavigator.pushNewScreen(context, screen: const CartScreen()));
+
   }
 
   @override
@@ -64,7 +61,7 @@ class ProductCard extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Container(
+                    child: SizedBox(
                       height: 120,
                       child: Image.network(product.images!.split(',')[0]),
                     ),
@@ -86,7 +83,7 @@ class ProductCard extends StatelessWidget {
                   ignoreGestures: true,
                   itemCount: 5,
                   itemSize: 16,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                   itemBuilder: (context, _) => const Icon(
                     Icons.star,
                     color: Colors.deepOrange,

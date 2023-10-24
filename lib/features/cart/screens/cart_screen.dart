@@ -1,10 +1,9 @@
-import 'dart:math';
+// ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/common/custom_appbar.dart';
 import 'package:paper_recycling_shopper/constants/global_variables.dart';
 import 'package:paper_recycling_shopper/features/cart/widgets/cart_item.dart';
-import 'package:paper_recycling_shopper/features/home/services/home_services.dart';
 import 'package:paper_recycling_shopper/models/order.dart';
 import 'package:paper_recycling_shopper/models/order_detail.dart';
 import 'package:paper_recycling_shopper/providers/user_provider.dart';
@@ -26,6 +25,7 @@ class _CartScreenState extends State<CartScreen> {
   bool isChangedQuantity = false;
   late int total = 0;
   bool isLoading = false;
+  bool isCheckingOut = false;
   @override
   void initState() {
     super.initState();
@@ -45,14 +45,14 @@ class _CartScreenState extends State<CartScreen> {
       );
       if (mounted) {
         setState(() {
-          mineOrderDetails = mineOrders![0].orderDetails!;
-          for (int i = 0; i < mineOrderDetails.length!; i++) {
+          mineOrderDetails = mineOrders[0].orderDetails!;
+          for (int i = 0; i < mineOrderDetails.length; i++) {
             total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
           }
         });
       }
     } catch (e) {
-      throw Exception(e.toString());
+      //throw Exception(e.toString());
     } finally {
       // isLoading = false;
     }
@@ -73,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
         total = 0;
         setState(() {
           mineOrderDetails.removeAt(index);
-          for (int i = 0; i < mineOrderDetails.length!; i++) {
+          for (int i = 0; i < mineOrderDetails.length; i++) {
             total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
           }
         });
@@ -82,7 +82,7 @@ class _CartScreenState extends State<CartScreen> {
           mineOrderDetails[index].quantity = res.quantity;
           mineOrderDetails[index].price = res.price;
           mineOrderDetails[index].updatedAt = res.updatedAt;
-          for (int i = 0; i < mineOrderDetails.length!; i++) {
+          for (int i = 0; i < mineOrderDetails.length; i++) {
             total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
           }
         });
@@ -103,7 +103,7 @@ class _CartScreenState extends State<CartScreen> {
         mineOrderDetails[index].quantity = res.quantity;
         mineOrderDetails[index].price = res.price;
         mineOrderDetails[index].updatedAt = res.updatedAt;
-        for (int i = 0; i < mineOrderDetails.length!; i++) {
+        for (int i = 0; i < mineOrderDetails.length; i++) {
           total += mineOrderDetails[i].price! * mineOrderDetails[i].quantity!;
         }
       });
@@ -127,15 +127,27 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void purchaseCart() async {
-    String res = await orderServices.purchaseOrder(
-        context: context, orderId: mineOrders[0].id!);
-    if (mounted) {
+    try {
       setState(() {
-        mineOrderDetails = [];
-        total = 0;
+        isCheckingOut = true;
+      });
+      String res = await orderServices.purchaseOrder(
+          context: context, orderId: mineOrders[0].id!);
+      if (mounted) {
+        setState(() {
+          mineOrderDetails = [];
+          total = 0;
+        });
+      }
+    } catch (e) {
+       // ignore: use_build_context_synchronously
+       ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Your cart is empty!")));
+    } finally {
+      setState(() {
+        isCheckingOut = false;
       });
     }
-    print(res);
   }
 
   @override
@@ -179,28 +191,28 @@ class _CartScreenState extends State<CartScreen> {
                 height: 20,
               ),
               isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : mineOrderDetails.isEmpty
-                      ? Text("Your cart is empty!")
+                      ? const Text("Your cart is empty!")
                       : ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: mineOrderDetails!.length,
+                          itemCount: mineOrderDetails.length,
                           itemBuilder: (context, index) {
                             return CartItem(
-                              orderDetail: mineOrderDetails![index],
+                              orderDetail: mineOrderDetails[index],
                               onAdd: () => increaseQuantity(
                                   context,
                                   index,
-                                  mineOrderDetails![index].orderId!,
-                                  mineOrderDetails![index].productId!,
-                                  mineOrderDetails![index].quantity!),
+                                  mineOrderDetails[index].orderId!,
+                                  mineOrderDetails[index].productId!,
+                                  mineOrderDetails[index].quantity!),
                               onRemove: () => decreaseQuantity(
                                   context,
                                   index,
-                                  mineOrderDetails![index].orderId!,
-                                  mineOrderDetails![index].productId!,
-                                  mineOrderDetails![index].quantity!),
+                                  mineOrderDetails[index].orderId!,
+                                  mineOrderDetails[index].productId!,
+                                  mineOrderDetails[index].quantity!),
                             );
                           }),
               Padding(
@@ -213,24 +225,6 @@ class _CartScreenState extends State<CartScreen> {
                         style: Theme.of(context).textTheme.titleLarge),
                     Text('$total PP',
                         style: Theme.of(context).textTheme.headlineSmall),
-                    // FutureBuilder(
-                    //   future: mindeOrderDetails,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       int total = 0;
-                    //       for (int i = 0; i < snapshot.data!.length; i++) {
-                    //         total += snapshot.data![i].price! *
-                    //             snapshot.data![i].quantity!;
-                    //       }
-                    //       return Text('$total PP',
-                    //           style: Theme.of(context).textTheme.headlineSmall);
-                    //     } else {
-                    //       return const Center(
-                    //         child: Text(""),
-                    //       );
-                    //     }
-                    //   },
-                    // ),
                   ],
                 ),
               )
@@ -246,12 +240,12 @@ class _CartScreenState extends State<CartScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: ElevatedButton(
-                onPressed: () => purchaseCart(),
+                onPressed: () => isCheckingOut ? null : purchaseCart(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   fixedSize: const Size(330, 60),
                 ),
-                child: const Text("Checkout", style: TextStyle(fontSize: 16)),
+                child: Text(isCheckingOut ? "Checking out..." : "Checkout", style: const TextStyle(fontSize: 16)),
               ),
             ),
           ),

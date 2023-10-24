@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:paper_recycling_shopper/common/custom_appbar.dart';
@@ -54,6 +53,25 @@ class _OrderScreenState extends State<OrderScreen> {
   //   }
   // }
 
+  void confirmOrder(int orderId) async {
+    if (mounted) {
+      setState(() {
+        isChooseDeliverStatus = false;
+        isChooseConfirmStatus = true;
+        isChooseCancelStatus = false;
+      });
+    }
+  }
+
+  void cancelOrder(int orderId) async {
+    if (mounted) {
+      setState(() {
+        isChooseDeliverStatus = false;
+        isChooseConfirmStatus = false;
+        isChooseCancelStatus = true;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
@@ -95,11 +113,6 @@ class _OrderScreenState extends State<OrderScreen> {
                           isChooseDeliverStatus = true;
                         });
                       },
-                      child: Icon(Icons.local_shipping_outlined,
-                          size: 25,
-                          color: isChooseDeliverStatus
-                              ? Colors.blue
-                              : Colors.black),
                       style: ElevatedButton.styleFrom(
                         shape: CircleBorder(
                             side: BorderSide(
@@ -108,12 +121,17 @@ class _OrderScreenState extends State<OrderScreen> {
                               : Colors.black,
                           width: 2,
                         )),
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         backgroundColor: Colors.white, // <-- Button color
                         foregroundColor: Colors.black, // <-- Splash color
                       ),
+                      child: Icon(Icons.local_shipping_outlined,
+                          size: 25,
+                          color: isChooseDeliverStatus
+                              ? Colors.blue
+                              : Colors.black),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Text(
@@ -140,6 +158,18 @@ class _OrderScreenState extends State<OrderScreen> {
                           isChooseDeliverStatus = false;
                         });
                       },
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(
+                            side: BorderSide(
+                          color: isChooseConfirmStatus
+                              ? GlobalVariables.primaryColor.withOpacity(1)
+                              : Colors.black,
+                          width: 2,
+                        )),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor: Colors.white, // <-- Button color
+                        foregroundColor: Colors.black, // <-- Splash color
+                      ),
                       child: Icon(
                         Icons.done_all_outlined,
                         size: 25,
@@ -147,18 +177,8 @@ class _OrderScreenState extends State<OrderScreen> {
                             ? GlobalVariables.primaryColor.withOpacity(1)
                             : Colors.black,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(
-                            side: BorderSide(
-                          color: isChooseConfirmStatus ? GlobalVariables.primaryColor.withOpacity(1) : Colors.black,
-                          width: 2,
-                        )),
-                        padding: EdgeInsets.all(20),
-                        backgroundColor: Colors.white, // <-- Button color
-                        foregroundColor: Colors.black, // <-- Splash color
-                      ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Text(
@@ -185,22 +205,23 @@ class _OrderScreenState extends State<OrderScreen> {
                           isChooseDeliverStatus = false;
                         });
                       },
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(
+                            side: BorderSide(
+                          color:
+                              isChooseCancelStatus ? Colors.red : Colors.black,
+                          width: 2,
+                        )),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor: Colors.white, // <-- Button color
+                        foregroundColor: Colors.black, // <-- Splash color
+                      ),
                       child: Icon(Icons.cancel_sharp,
                           size: 25,
                           color:
                               isChooseCancelStatus ? Colors.red : Colors.black),
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(
-                            side: BorderSide(
-                          color: isChooseCancelStatus ? Colors.red : Colors.black,
-                          width: 2,
-                        )),
-                        padding: EdgeInsets.all(20),
-                        backgroundColor: Colors.white, // <-- Button color
-                        foregroundColor: Colors.black, // <-- Splash color
-                      ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Text(
@@ -225,7 +246,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         padding: const EdgeInsets.all(20.0),
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          height: (isChooseDeliverStatus ? 250 : 120)+
+                          height: (isChooseDeliverStatus ? 250 : 120) +
                               90 *
                                   snapshot.data![index].orderDetails!.length
                                       .toDouble(),
@@ -268,7 +289,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 SizedBox(
@@ -297,7 +318,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(orderdetail.product!.name!,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     fontSize: 20,
                                                   )),
                                               Text(
@@ -313,7 +334,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                     );
                                   }).toList()),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Padding(
@@ -338,45 +359,56 @@ class _OrderScreenState extends State<OrderScreen> {
                                     ],
                                   ),
                                 ),
-                                Spacer(),
-                                isChooseDeliverStatus ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: ElevatedButton(
-                                        onPressed: () => {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.black,
-                                          fixedSize: const Size(330, 60),
+                                const Spacer(),
+                                isChooseDeliverStatus
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: ElevatedButton(
+                                              onPressed: () => confirmOrder(
+                                                  snapshot.data![index].id!),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.black,
+                                                fixedSize: const Size(330, 60),
+                                              ),
+                                              child: const Text("Confirm Order",
+                                                  style:
+                                                      TextStyle(fontSize: 16)),
+                                            ),
+                                          ),
                                         ),
-                                        child: const Text("Confirm Order",
-                                            style: TextStyle(fontSize: 16)),
-                                      ),
-                                    ),
-                                  ),
-                                ) : Text(""),
-                                isChooseDeliverStatus ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: ElevatedButton(
-                                        onPressed: () => {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.grey.shade200,
-                                          fixedSize: const Size(330, 60),
+                                      )
+                                    : const Text(""),
+                                isChooseDeliverStatus
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: ElevatedButton(
+                                              onPressed: () => cancelOrder(snapshot.data![index].id!),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.grey.shade200,
+                                                fixedSize: const Size(330, 60),
+                                              ),
+                                              child: const Text("Cancel Order",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black)),
+                                            ),
+                                          ),
                                         ),
-                                        child: const Text("Cancel Order",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                  ),
-                                ) : Text(""),
+                                      )
+                                    : const Text(""),
                               ],
                             ),
                           ),

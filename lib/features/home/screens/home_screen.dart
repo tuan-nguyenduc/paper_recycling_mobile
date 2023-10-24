@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:math';
 
@@ -11,8 +13,10 @@ import 'package:paper_recycling_shopper/features/home/widgets/product_card.dart'
 import 'package:paper_recycling_shopper/features/product/screens/product_detail.dart';
 import 'package:paper_recycling_shopper/models/category.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
+import 'package:paper_recycling_shopper/providers/cart_quantity.dart';
 import 'package:paper_recycling_shopper/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -77,17 +81,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Image.network(user.avatar!, width: 30),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           user.name,
-                          style: TextStyle(fontSize: 13),
+                          style: const TextStyle(fontSize: 13),
                         ),
                         Text(
                           user.email,
-                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                          style: const TextStyle(fontSize: 13, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -104,7 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined),
+              icon: badges.Badge(
+                  badgeAnimation: const badges.BadgeAnimation.rotation(
+                    animationDuration: Duration(seconds: 1),
+                    colorChangeAnimationDuration: Duration(seconds: 1),
+                    loopAnimation: false,
+                    curve: Curves.fastOutSlowIn,
+                    colorChangeAnimationCurve: Curves.easeInCubic,
+                  ),
+                  badgeContent: Text(
+                    context.watch<CartQuantity>().quantity.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  child: const Icon(Icons.shopping_cart_outlined)),
               onPressed: () {
                 //to cart page
               },
@@ -197,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return ProductCard(
-                            context: context,
-                            product: snapshot.data![index],
-                            );
+                          context: context,
+                          product: snapshot.data![index],
+                        );
                       },
                     );
                   } else {
@@ -237,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     );
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }

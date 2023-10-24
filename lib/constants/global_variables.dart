@@ -1,3 +1,7 @@
+
+
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 const API_URL = "https://paper-recycling-be.vinhomes.co.uk/api/v1";

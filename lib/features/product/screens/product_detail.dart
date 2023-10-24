@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -9,7 +10,6 @@ import 'package:paper_recycling_shopper/features/home/widgets/product_card.dart'
 import 'package:paper_recycling_shopper/features/product/widget/review_card.dart';
 import 'package:paper_recycling_shopper/models/product.dart';
 import 'package:paper_recycling_shopper/models/review.dart';
-import 'package:paper_recycling_shopper/models/user.dart';
 import 'package:paper_recycling_shopper/services/order_services.dart';
 import 'package:paper_recycling_shopper/services/review_services.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -118,7 +118,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   ignoreGestures: true,
                   itemCount: 5,
                   itemSize: 16,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                   itemBuilder: (context, _) => const Icon(
                     Icons.star,
                     color: Colors.deepOrange,
@@ -145,7 +145,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 height: 10,
               ),
               const Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10),
                 child: Text("Product Description",
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -166,7 +166,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 height: 10,
               ),
               const Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10),
                 child: Text("You might also like",
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -182,7 +182,6 @@ class _ProductDetailState extends State<ProductDetail> {
                     if (snapshot.hasData) {
                       //take the list of related products except this product.
                       var productList = [...snapshot.data!];
-                      print(productList.toString());
                       productList.removeWhere((product) =>
                           product.categoryId == widget.product.categoryId);
 
@@ -264,7 +263,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         GlobalVariables.primaryColor.withOpacity(1),
                     fixedSize: const Size(330, 60),
                   ),
-                  child: Text("Buy Now", style: TextStyle(fontSize: 16)),
+                  child: const Text("Buy Now", style: TextStyle(fontSize: 16)),
                 ),
               ),
             ),

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:paper_recycling_shopper/models/order_detail.dart';
-import 'package:paper_recycling_shopper/models/product.dart';
 import 'package:paper_recycling_shopper/services/order_services.dart';
 
 class CartItem extends StatelessWidget {
@@ -58,7 +57,7 @@ class CartItem extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(orderDetail.product!.name!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                             )),
                       ),
@@ -69,7 +68,7 @@ class CartItem extends StatelessWidget {
                               icon: const Icon(Icons.remove_circle_outline)),
                           Text(
                             orderDetail.quantity.toString(),
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           IconButton(
                               onPressed: () => onAdd(),
@@ -86,7 +85,7 @@ class CartItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text('${orderDetail.price!*orderDetail.quantity!} PP',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
